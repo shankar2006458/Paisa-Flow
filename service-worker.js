@@ -1,4 +1,4 @@
-const CACHE_NAME = 'paisaflow-v2';
+const CACHE_NAME = 'paisaflow-v3';
 
 const APP_FILES = [
   './',
