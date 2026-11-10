@@ -187,6 +187,31 @@
   white-space: nowrap;
 }
 
+/* New: right side of the day heading (net + count) */
+.transaction-day-right {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  flex: none;
+}
+
+/* New: that day's profit / loss */
+.transaction-day-net {
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.01em;
+}
+
+/* New: let a long date shrink instead of pushing the amount off screen */
+.transaction-day-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .transaction-day-card .row {
   padding: 14px 1px;
 }
@@ -595,7 +620,7 @@
 }
 
 .back-to-top:hover {
-  background: #50800e;
+  background: #c5f27c;
   transform: translateY(0) scale(1);
 }
 
@@ -673,7 +698,11 @@
 /* Smooth privacy animation for all cards */
 .hero-amount,
 .hero-stat-value,
+.account-tile-amount,
 .fuel-hero-amount,
+.fuel-hero-stat-value,
+.fuel-stat-value,
+.insight-stat-value,
 .insights-hero-amount,
 .insights-hero-stat-value {
   transition: filter .35s ease;
@@ -686,8 +715,16 @@
   user-select: none;
 }
 
-/* Fuel last refill */
-.fuel-hero.is-hidden .fuel-hero-amount {
+/* Home account tile balances (Cash wallet + Bank) */
+.hero-card.is-hidden ~ .accounts-row .account-tile-amount,
+.hero-card.is-hidden ~ .home-section-head + .spend-card .spend-amount {
+  filter: blur(7px);
+  user-select: none;
+}
+
+/* Fuel monthly cost + avg price */
+.fuel-hero.is-hidden .fuel-hero-amount,
+.fuel-hero.is-hidden #fuel-price {
   filter: blur(7px);
   user-select: none;
 }
@@ -695,6 +732,13 @@
 /* Insights financial amounts */
 .insights-hero.is-hidden .insights-hero-amount,
 .insights-hero.is-hidden .insights-hero-stat-value {
+  filter: blur(7px);
+  user-select: none;
+}
+
+/* Insights quick-stat cards (DAILY AVG + VS LAST MONTH) */
+.insights-hero.is-hidden ~ .insights-stats #daily-average,
+.insights-hero.is-hidden ~ .insights-stats #month-change {
   filter: blur(7px);
   user-select: none;
 }
@@ -1016,6 +1060,29 @@
     .fuel-stat-value {
       display: block; font-size: 17px; font-weight: 700; color: var(--text);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* New: small secondary line under a stat value (last-refill date) */
+    .fuel-stat-meta {
+      font-size: 10.5px;
+      color: var(--muted);
+      font-weight: 500;
+      margin-top: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Blur the last-refill amount too when the privacy toggle is on */
+.fuel-hero.is-hidden ~ .fuel-stats #last-refill,
+.fuel-hero.is-hidden ~ .fuel-stats #last-refill-detail,
+.fuel-hero.is-hidden ~ .fuel-stats #last-refill-litres,
+.fuel-hero.is-hidden ~ .fuel-stats #last-refill-odometer {
+  filter: blur(7px);
+  user-select: none;
+}
+    #last-refill-detail {
+      transition: filter .35s ease;
     }
 
     .fuel-section-head {
@@ -2271,38 +2338,38 @@
             <span class="fuel-hero-orb fuel-hero-orb-a" aria-hidden="true"></span>
             <span class="fuel-hero-orb fuel-hero-orb-b" aria-hidden="true"></span>
 
-<div class="fuel-hero-head">
-  <span class="fuel-hero-icon" aria-hidden="true"><i data-lucide="fuel"></i></span>
-  <p class="fuel-hero-label">LAST REFILL</p>
-</div>
+            <div class="fuel-hero-head">
+              <span class="fuel-hero-icon" aria-hidden="true"><i data-lucide="calendar-days"></i></span>
+              <p class="fuel-hero-label">THIS MONTH'S FUEL</p>
+            </div>
 
-<button
-  id="fuel-visibility"
-  class="hero-privacy-toggle"
-  type="button"
-  aria-label="Hide refill amount"
-  aria-pressed="false"
-  title="Hide refill amount">
-  <i data-lucide="eye"></i>
-</button>
+            <button
+              id="fuel-visibility"
+              class="hero-privacy-toggle"
+              type="button"
+              aria-label="Hide monthly fuel cost"
+              aria-pressed="false"
+              title="Hide monthly fuel cost">
+              <i data-lucide="eye"></i>
+            </button>
 
-            <div id="last-refill" class="fuel-hero-amount money"></div>
-            <p id="last-refill-detail" class="fuel-hero-detail"></p>
+            <div id="fuel-spend" class="fuel-hero-amount money"></div>
+            <p id="fuel-month-detail" class="fuel-hero-detail"></p>
 
             <div class="fuel-hero-stats">
               <div class="fuel-hero-stat">
                 <span class="fuel-hero-stat-icon" aria-hidden="true"><i data-lucide="droplets"></i></span>
                 <div>
                   <p class="fuel-hero-stat-label">LITRES</p>
-                  <strong id="last-refill-litres" class="fuel-hero-stat-value"></strong>
+                  <strong id="fuel-litres" class="fuel-hero-stat-value"></strong>
                 </div>
               </div>
               <span class="fuel-hero-divider" aria-hidden="true"></span>
               <div class="fuel-hero-stat">
-                <span class="fuel-hero-stat-icon" aria-hidden="true"><i data-lucide="gauge"></i></span>
+                <span class="fuel-hero-stat-icon" aria-hidden="true"><i data-lucide="indian-rupee"></i></span>
                 <div>
-                  <p class="fuel-hero-stat-label">ODOMETER</p>
-                  <strong id="last-refill-odometer" class="fuel-hero-stat-value"></strong>
+                  <p class="fuel-hero-stat-label">AVG PRICE / L</p>
+                  <strong id="fuel-price" class="fuel-hero-stat-value"></strong>
                 </div>
               </div>
             </div>
@@ -2311,10 +2378,11 @@
           <div class="fuel-stats">
             <div class="fuel-stat-card">
               <div class="fuel-stat-top">
-                <span class="fuel-stat-icon" aria-hidden="true"><i data-lucide="calendar-days"></i></span>
-                <p class="fuel-stat-label">This month</p>
+                <span class="fuel-stat-icon" aria-hidden="true"><i data-lucide="fuel"></i></span>
+                <p class="fuel-stat-label">Last refill</p>
               </div>
-              <strong id="fuel-spend" class="fuel-stat-value money"></strong>
+              <strong id="last-refill" class="fuel-stat-value money"></strong>
+              <p id="last-refill-detail" class="fuel-stat-meta"></p>
             </div>
             <div class="fuel-stat-card">
               <div class="fuel-stat-top">
@@ -2326,16 +2394,16 @@
             <div class="fuel-stat-card">
               <div class="fuel-stat-top">
                 <span class="fuel-stat-icon" aria-hidden="true"><i data-lucide="droplets"></i></span>
-                <p class="fuel-stat-label">Litres this month</p>
+                <p class="fuel-stat-label">Last refill litres</p>
               </div>
-              <strong id="fuel-litres" class="fuel-stat-value"></strong>
+              <strong id="last-refill-litres" class="fuel-stat-value"></strong>
             </div>
             <div class="fuel-stat-card">
               <div class="fuel-stat-top">
-                <span class="fuel-stat-icon" aria-hidden="true"><i data-lucide="indian-rupee"></i></span>
-                <p class="fuel-stat-label">Avg price / L</p>
+                <span class="fuel-stat-icon" aria-hidden="true"><i data-lucide="gauge"></i></span>
+                <p class="fuel-stat-label">Last odometer</p>
               </div>
-              <strong id="fuel-price" class="fuel-stat-value"></strong>
+              <strong id="last-refill-odometer" class="fuel-stat-value"></strong>
             </div>
           </div>
 
@@ -3298,13 +3366,47 @@ function renderGroupedTransactions(list, emptyText) {
 
     const header = el('div', 'transaction-day-heading');
 
-    header.append(
-      el('span', 'transaction-day-title', heading),
+    // ---- That day's profit / loss ----
+    // Transfers are internal money movement, so they are not profit or loss.
+    const dayIncome = records
+      .filter((r) => isActual(r) && kindOf(r) === 'income')
+      .reduce((sum, r) => sum + Number(r.amount || 0), 0);
+
+    const dayExpense = records
+      .filter((r) => isActual(r) && kindOf(r) === 'expense')
+      .reduce((sum, r) => sum + Number(r.amount || 0), 0);
+
+    const dayNet = dayIncome - dayExpense;
+
+    const dayNetEl = el('span', 'transaction-day-net money');
+
+    if (dayNet > 0) {
+      dayNetEl.textContent = '+' + rupees(dayNet);
+      dayNetEl.style.color = 'var(--green)';
+      dayNetEl.title = `Profit: ${rupees(dayIncome)} in − ${rupees(dayExpense)} out`;
+    } else if (dayNet < 0) {
+      dayNetEl.textContent = '−' + rupees(Math.abs(dayNet));
+      dayNetEl.style.color = 'var(--red)';
+      dayNetEl.title = `Loss: ${rupees(dayIncome)} in − ${rupees(dayExpense)} out`;
+    } else {
+      dayNetEl.textContent = rupees(0);
+      dayNetEl.style.color = 'var(--muted)';
+      dayNetEl.title = 'No profit or loss this day';
+    }
+
+    const headerRight = el('div', 'transaction-day-right');
+    headerRight.append(
+      dayNetEl,
       el(
         'span',
         'transaction-day-count',
         `${records.length} ${records.length === 1 ? 'transaction' : 'transactions'}`
       )
+    );
+
+    header.append(
+      el('span', 'transaction-day-title', heading),
+      headerRight
     );
 
     card.append(header);
@@ -3462,13 +3564,48 @@ function renderGroupedTransactions(list, emptyText) {
           const card = el('div', 'transaction-day-card');
           const header = el('div', 'transaction-day-heading');
 
-          header.append(
-            el('span', 'transaction-day-title', heading),
+          // ---- That day's net movement for THIS account ----
+          const dayNet = records.reduce((sum, r) => {
+            const amt = Number(r.amount || 0);
+            const kind = kindOf(r);
+
+            if (kind === 'income') return r.dest_account === account ? sum + amt : sum;
+            if (kind === 'expense') return r.source_account === account ? sum - amt : sum;
+            if (kind === 'transfer') {
+              let next = sum;
+              if (r.dest_account === account) next += amt;
+              if (r.source_account === account) next -= amt;
+              return next;
+            }
+            return sum;
+          }, 0);
+
+          const dayNetEl = el('span', 'transaction-day-net money');
+
+          if (dayNet > 0) {
+            dayNetEl.textContent = '+' + rupees(dayNet);
+            dayNetEl.style.color = 'var(--green)';
+          } else if (dayNet < 0) {
+            dayNetEl.textContent = '−' + rupees(Math.abs(dayNet));
+            dayNetEl.style.color = 'var(--red)';
+          } else {
+            dayNetEl.textContent = rupees(0);
+            dayNetEl.style.color = 'var(--muted)';
+          }
+
+          const headerRight = el('div', 'transaction-day-right');
+          headerRight.append(
+            dayNetEl,
             el(
               'span',
               'transaction-day-count',
               `${records.length} ${records.length === 1 ? 'transaction' : 'transactions'}`
             )
+          );
+
+          header.append(
+            el('span', 'transaction-day-title', heading),
+            headerRight
           );
 
           card.append(header);
@@ -3771,15 +3908,30 @@ renderGroupedTransactions(
           $('last-refill-detail').textContent = parts.join(' · ');
           $('last-refill-litres').textContent = `${Number(latest.litres || 0).toFixed(2)} L`;
           $('last-refill-odometer').textContent = formatOdometer(latest.odometer);
-        } else {
-          $('last-refill').textContent = 'No refills yet';
-          $('last-refill-detail').textContent = 'Tap the + button to log your first petrol refill.';
-          $('last-refill-litres').textContent = '—';
-          $('last-refill-odometer').textContent = '—';
-        }
+} else {
+  $('last-refill').textContent = 'No refills yet';
+  $('last-refill').dataset.countTarget = '';
+  $('last-refill')._countCurrent = 0;
+  $('last-refill-detail').textContent = 'No petrol refills yet';
+  $('last-refill-litres').textContent = '—';
+  $('last-refill-odometer').textContent = '—';
+}
 
         const monthSpend = month.reduce((sum, r) => sum + Number(r.amount), 0);
-        $('fuel-spend').textContent = rupees(monthSpend);
+
+        if (month.length) {
+          animateRupees($('fuel-spend'), monthSpend);
+        } else {
+          $('fuel-spend').textContent = '₹0.00';
+          $('fuel-spend').dataset.countTarget = '0';
+          $('fuel-spend')._countCurrent = 0;
+        }
+
+        const monthLabel = new Date(currentMonth() + '-01T12:00:00')
+          .toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+        $('fuel-month-detail').textContent = month.length
+          ? `${monthLabel} · ${month.length} refill${month.length !== 1 ? 's' : ''}`
+          : 'No refills yet this month';
 
         const monthLitres = month.reduce((sum, r) => sum + Number(r.litres), 0);
         $('fuel-litres').textContent = monthLitres ? monthLitres.toFixed(2) + ' L' : '—';
@@ -4948,12 +5100,12 @@ function setFuelVisibility(isHidden) {
   fuelVisibility.setAttribute('aria-pressed', isHidden);
   fuelVisibility.setAttribute(
     'aria-label',
-    isHidden ? 'Show refill amount' : 'Hide refill amount'
+    isHidden ? 'Show monthly fuel cost' : 'Hide monthly fuel cost'
   );
 
   fuelVisibility.title = isHidden
-    ? 'Show refill amount'
-    : 'Hide refill amount';
+    ? 'Show monthly fuel cost'
+    : 'Hide monthly fuel cost';
 
   fuelVisibility.innerHTML = isHidden
     ? '<i data-lucide="eye-off"></i>'
